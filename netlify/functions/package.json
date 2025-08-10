@@ -1,0 +1,19 @@
+{
+  "name": "shobdo-kotha-chat",
+  "version": "1.0.0",
+  "description": "Netlify function for Shobdo Kotha chatbot",
+  "main": "chat.js",
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chatbot",
+    "netlify",
+    "deepseek"
+  ],
+  "author": "",
+  "license": "ISC"
+}

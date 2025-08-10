@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>শব্দ কথা — Shobdo Kotha</title>
+  <style>
+    :root {
+      --bg:#ffffff; --fg:#0b0b0b; --card:#f3f3f3; --accent:#6b8cff;
+    }
+    .dark {
+      --bg:#000000; --fg:#f5f5f5; --card:#0b0b0b; --accent:#7393ff;
+    }
+    .dark input::placeholder {
+      color: #cccccc;
+    }
+    html,body {height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans Bengali',sans-serif;background:var(--bg);color:var(--fg)}
+    .app {max-width:900px;margin:0 auto;padding:12px;display:grid;grid-template-rows:auto 1fr auto;gap:12px;height:100vh;box-sizing:border-box}
+    header {display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    h1 {margin:0;font-size:clamp(18px, 4vw, 22px)}
+    .controls {display:flex;gap:8px;flex-wrap:wrap}
+    .btn {padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:var(--card);cursor:pointer;color:var(--fg);font-size:14px;min-height:36px;touch-action:manipulation}
+    .btn.toggle {min-width:80px}
+    main.chat {background:transparent;border-radius:12px;padding:10px;overflow-y:auto;border:1px solid rgba(0,0,0,0.06);scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+    .message {margin:10px 0;display:flex;word-wrap:break-word}
+    .me {justify-content:flex-end}
+    .bubble {max-width:85%;padding:10px 12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));box-shadow:0 2px 6px rgba(0,0,0,0.04);word-wrap:break-word}
+    .metadata {font-size:12px;opacity:0.7;margin-bottom:6px}
+    footer {display:flex;gap:8px;align-items:center;padding:8px 0}
+    input[type=text] {flex:1;padding:12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);background:var(--card);color:var(--fg);font-size:16px;min-height:44px}
+    .small {font-size:13px;padding:6px 8px}
+    .lang-active {outline:2px solid var(--accent)}
+    .typing {height:12px;width:60px;background:linear-gradient(90deg, rgba(0,0,0,0.05), rgba(0,0,0,0.08));border-radius:6px;animation:blink 1s infinite}
+    @keyframes blink {0%{opacity:0.3}50%{opacity:1}100%{opacity:0.3}}
+    
+    /* Mobile and tablet responsive design */
+    @media (max-width: 768px) {
+        .app {padding:8px;margin:0}
+        header {flex-direction:column;align-items:stretch;gap:8px}
+        .controls {justify-content:center}
+        .btn {padding:10px 14px;font-size:14px}
+        .btn.toggle {min-width:70px}
+        main.chat {min-height:300px}
+        .bubble {max-width:90%}
+        footer {flex-direction:column;gap:12px}
+        input[type=text] {width:100%;box-sizing:border-box}
+        #sendBtn {width:100%}
+    }
+    
+    @media (max-width: 480px) {
+        .app {padding:6px}
+        h1 {font-size:18px;text-align:center}
+        .controls {gap:6px}
+        .btn {padding:8px 10px;font-size:13px}
+        .btn.toggle {min-width:60px}
+        .bubble {max-width:95%;padding:8px 10px}
+        input[type=text] {padding:10px;font-size:16px}
+    }
+    
+    /* Ensure proper scrolling on all devices */
+    @media (max-height: 600px) {
+        .app {height:100vh;padding:6px}
+        main.chat {min-height:200px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header>
+      <div>
+        <h1>শব্দ কথা <small style="font-size:12px;display:block;opacity:0.7">Shobdo Kotha</small></h1>
+        <div style="font-size:12px;opacity:0.7">Your bilingual AI chat — toggle Bangla / English</div>
+      </div>
+      <div class="controls">
+        <button id="btnTheme" class="btn small">Dark</button>
+        <button id="btnEng" class="btn toggle lang-active">English</button>
+        <button id="btnBn" class="btn toggle">বাংলা</button>
+      </div>
+    </header>
+
+    <main class="chat" id="chat"></main>
+
+    <footer>
+      <input id="inputMsg" type="text" placeholder="Type a message... (press Enter to send)" />
+      <button id="sendBtn" class="btn">Send</button>
+    </footer>
+  </div>
+
+  <template id="tplMsg">
+    <div class="message"><div class="bubble"><div class="metadata"></div><div class="content"></div></div></div>
+  </template>
+
+  <script>
+    const FUNCTION_URL = '/api/chat';
+    const chat = document.getElementById('chat');
+    const input = document.getElementById('inputMsg');
+    const sendBtn = document.getElementById('sendBtn');
+    const btnTheme = document.getElementById('btnTheme');
+    const btnEng = document.getElementById('btnEng');
+    const btnBn = document.getElementById('btnBn');
+
+    let lang = 'en';
+    let dark = false;
+
+    function typeText(element, text, speed = 30) {
+        element.textContent = "";
+        let i = 0;
+        function type() {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(type, speed);
+            }
+        }
+        type();
+    }
+
+    function appendMessage(text, who='bot', language='en') {
+      const tpl = document.getElementById('tplMsg');
+      const node = tpl.content.cloneNode(true);
+      const wrapper = node.querySelector('.message');
+      if(who==='me') wrapper.classList.add('me');
+      node.querySelector('.metadata').textContent = who==='me' ? (language==='bn'? 'আপনি' : 'You') : (language==='bn'? 'শব্দ কথা' : 'Shobdo Kotha');
+      
+      const contentElement = node.querySelector('.content');
+      chat.appendChild(node);
+      chat.scrollTop = chat.scrollHeight;
+      
+      // Use typing effect for bot messages only
+      if (who === 'bot') {
+        typeText(contentElement, text, 30);
+      } else {
+        contentElement.innerHTML = text.replace(/\n/g,'<br>');
+      }
+    }
+
+    function setLang(l) {
+      lang = l;
+      btnEng.classList.toggle('lang-active', l==='en');
+      btnBn.classList.toggle('lang-active', l==='bn');
+      input.placeholder = l==='bn' ? 'একটি বার্তা টাইপ করুন...' : 'Type a message...';
+    }
+
+    function setTheme(isDark) {
+      dark = isDark;
+      document.documentElement.classList.toggle('dark', isDark);
+      btnTheme.textContent = isDark ? 'Light' : 'Dark';
+    }
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if(!text) return;
+      appendMessage(text, 'me', lang);
+      input.value = '';
+
+      const typing = document.createElement('div');
+      typing.className = 'message';
+      typing.innerHTML = '<div class="bubble"><div class="metadata">' + (lang==='bn' ? 'শব্দ কথা' : 'Shobdo Kotha') + '</div><div class="content"><div class="typing"></div></div></div>';
+      chat.appendChild(typing);
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const resp = await fetch(FUNCTION_URL, {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ message: text, lang })
+        });
+        const data = await resp.json();
+        typing.remove();
+        appendMessage(data.reply || (lang==='bn' ? 'কোনো উত্তর পাওয়া যায়নি।' : 'No reply received.'), 'bot', lang);
+      } catch(err) {
+        typing.remove();
+        appendMessage((lang==='bn' ? 'ত্রুটি: সার্ভারের সাথে যোগাযোগ করা যায়নি।' : 'Error: could not reach server.'), 'bot', lang);
+      }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') sendMessage(); });
+    btnEng.addEventListener('click', ()=>setLang('en'));
+    btnBn.addEventListener('click', ()=>setLang('bn'));
+    btnTheme.addEventListener('click', ()=>setTheme(!dark));
+
+    setLang('en');
+    setTheme(false);
+    appendMessage('Hello! I am Shobdo Kotha. Toggle বাংলা (Bangla) or English and start chatting.', 'bot', 'en');
+  </script>
+</body>
+</html>
