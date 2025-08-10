@@ -39,7 +39,7 @@
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/shobdo-kotha.git
+   git clone https://github.com/zubairdoescoding/shobdo-kotha.git
    cd shobdo-kotha
    ```
 
@@ -165,14 +165,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help:
 
-- 🐛 **Report bugs**: [Create an issue](https://github.com/yourusername/shobdo-kotha/issues)
-- 💡 **Request features**: [Create an issue](https://github.com/yourusername/shobdo-kotha/issues)
+- 🐛 **Report bugs**: [Create an issue](https://github.com/zubairdoescoding/shobdo-kotha/issues)
+- 💡 **Request features**: [Create an issue](https://github.com/zubairdoescoding/shobdo-kotha/issues)
 - 📧 **Contact**: [Your email or social media]
 
 ---
 
 **Made with ❤️ for the Bengali-speaking community and AI enthusiasts worldwide!**
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/shobdo-kotha?style=social)](https://github.com/yourusername/shobdo-kotha)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/shobdo-kotha?style=social)](https://github.com/yourusername/shobdo-kotha)
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/shobdo-kotha)](https://github.com/yourusername/shobdo-kotha/issues)
+[![GitHub stars](https://img.shields.io/github/stars/zubairdoescoding/shobdo-kotha?style=social)](https://github.com/zubairdoescoding/shobdo-kotha)
+[![GitHub forks](https://img.shields.io/github/forks/zubairdoescoding/shobdo-kotha?style=social)](https://github.com/zubairdoescoding/shobdo-kotha)
+[![GitHub issues](https://github.com/zubairdoescoding/shobdo-kotha/issues)](https://github.com/zubairdoescoding/shobdo-kotha/issues)
