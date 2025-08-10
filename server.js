@@ -1,7 +1,11 @@
-const express = require('express');
-const cors = require('cors');
-const fetch = require('node-fetch');
-const path = require('path');
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,28 +53,29 @@ app.post('/api/chat', async (req, res) => {
       ? "You are Shobdo Kotha, a helpful AI assistant. Respond in Bengali (বাংলা) unless the user asks for English. Keep responses concise and friendly. When someone says 'free palestine', respond with solidarity and mention that you support peace and human rights for all people."
       : "You are Shobdo Kotha, a helpful AI assistant. Respond in English unless the user asks for Bengali. Keep responses concise and friendly. When someone says 'free palestine', respond with solidarity and mention that you support peace and human rights for all people.";
 
-    const response = await fetch("https://api.deepseek.com/chat/completions", {
+    const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer sk-f65c83248c664f22abffd3e8ee4946cc",
+        "Authorization": "Bearer " + (process.env.DEEPSEEK_API_KEY || "sk-f65c83248c664f22abffd3e8ee4946cc"),
       },
       body: JSON.stringify({
-        model: "deepseek-chat",
+        model: "deepseek-r1",
         messages: [
           { role: "system", content: systemPrompt },
           ...conversation.slice(-10) // Include last 10 messages for context
         ],
         max_tokens: 500,
         temperature: 0.7,
+        stream: false
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.text();
-      console.error('DeepSeek API error:', errorData);
+      console.error('DeepSeek R1 API error:', errorData);
       return res.status(response.status).json({ 
-        error: 'DeepSeek API error', 
+        error: 'DeepSeek R1 API error', 
         details: errorData 
       });
     }
@@ -109,4 +114,5 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Shobdo Kotha server running on http://localhost:${PORT}`);
   console.log(`💬 Chat API available at http://localhost:${PORT}/api/chat`);
+  console.log(`🌐 Using DeepSeek R1 API for AI responses`);
 });

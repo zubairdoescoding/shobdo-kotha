@@ -1,45 +1,23 @@
-# 🌟 শব্দ কথা — Shobdo Kotha
+# শব্দ কথা — Shobdo Kotha
 
-> A bilingual AI chatbot that speaks both English and বাংলা (Bengali)
+A bilingual (Bengali/English) AI chatbot powered by DeepSeek R1 API.
 
-[![Deploy to Render](https://img.shields.io/badge/Deploy%20to-Render-00f2c3?style=for-the-badge&logo=render)](https://render.com/deploy)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.18+-blue?style=for-the-badge&logo=express)](https://expressjs.com/)
-[![DeepSeek](https://img.shields.io/badge/DeepSeek-R1-orange?style=for-the-badge)](https://deepseek.com/)
+## Features
 
-## 🚀 Live Demo
+- 🌐 **Bilingual Support**: Chat in both Bengali (বাংলা) and English
+- 🎨 **Modern UI**: Clean, responsive design with dark/light theme toggle
+- ✨ **Smooth Animations**: Typing effects and message animations
+- 📱 **Mobile Responsive**: Works perfectly on all devices
+- 🤖 **AI Powered**: Powered by DeepSeek R1 for intelligent responses
+- 🕊️ **Special Features**: Special responses for solidarity messages
 
-**Coming soon!** Deploy to Render for a live demo.
-
-## ✨ Features
-
-- 🤖 **AI-Powered Chat**: Powered by DeepSeek R1 model
-- 🌍 **Bilingual Support**: English and বাংলা (Bengali)
-- 🎨 **Modern UI**: Clean, responsive design with dark/light themes
-- 📱 **Mobile Friendly**: Works perfectly on all devices
-- 🔄 **Real-time Chat**: Instant AI responses
-- 🎯 **Context Aware**: Remembers conversation history
-- 🕊️ **Special Responses**: Handles solidarity messages with care
-
-## 🛠️ Tech Stack
-
-- **Backend**: Node.js + Express.js
-- **Frontend**: Vanilla JavaScript + HTML + CSS
-- **AI Model**: DeepSeek R1 API
-- **Deployment**: Render (free tier)
-- **Languages**: English, বাংলা (Bengali)
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ installed
-- DeepSeek API key
+## Quick Start
 
 ### Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/zubairdoescoding/shobdo-kotha.git
+   git clone <your-repo-url>
    cd shobdo-kotha
    ```
 
@@ -50,129 +28,120 @@
 
 3. **Set up environment variables**
    ```bash
-   # Create .env file
+   # Create a .env file (optional)
    echo "DEEPSEEK_API_KEY=your_api_key_here" > .env
    ```
 
-4. **Start the server**
+4. **Start the development server**
    ```bash
-   npm start
+   npm run dev
    ```
 
 5. **Open your browser**
    Navigate to `http://localhost:3000`
 
-### Environment Variables
+### Production Deployment
 
-Create a `.env` file in the root directory:
-
-```env
-DEEPSEEK_API_KEY=your_deepseek_api_key_here
-PORT=3000
+#### Option 1: Traditional Hosting
+```bash
+npm start
 ```
 
-## 🌐 Deployment
+#### Option 2: Netlify (Recommended)
+1. Push your code to GitHub
+2. Connect your repository to Netlify
+3. Set environment variable `DEEPSEEK_API_KEY` in Netlify dashboard
+4. Deploy!
 
-### Deploy to Render (Recommended - Free)
+## API Configuration
 
-1. **Fork this repository** to your GitHub account
-2. **Go to [render.com](https://render.com)** and sign up
-3. **Click "New +" → "Web Service"**
-4. **Connect your GitHub** and select the forked repo
-5. **Configure:**
-   - **Name**: `shobdo-kotha`
-   - **Environment**: `Node`
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-   - **Plan**: Free
-6. **Add Environment Variables:**
-   - `DEEPSEEK_API_KEY`: Your DeepSeek API key
-7. **Click "Create Web Service"**
+### DeepSeek R1 API
+The chatbot uses DeepSeek R1 API for AI responses. You'll need to:
 
-Your chatbot will be live in minutes! 🎉
+1. Get an API key from [DeepSeek](https://platform.deepseek.com/)
+2. Set it as an environment variable:
+   ```bash
+   export DEEPSEEK_API_KEY=your_api_key_here
+   ```
+   Or create a `.env` file:
+   ```
+   DEEPSEEK_API_KEY=your_api_key_here
+   ```
 
-## 📁 Project Structure
+### API Endpoints
+
+- `POST /api/chat` - Main chat endpoint
+  - Body: `{ "message": "your message", "lang": "en|bn" }`
+  - Response: `{ "reply": "AI response" }`
+
+## Project Structure
 
 ```
 shobdo-kotha/
-├── server.js              # Express server
-├── index.html             # Frontend interface
-├── package.json           # Dependencies
-├── .env                   # Environment variables
-├── .gitignore            # Git ignore rules
-└── README.md             # This file
+├── index.html          # Frontend interface
+├── server.js           # Express.js server
+├── package.json        # Dependencies
+├── netlify/            # Netlify deployment
+│   └── functions/
+│       └── chat.js     # Netlify function
+└── README.md           # This file
 ```
 
-## 🔧 API Endpoints
+## Customization
 
-### POST `/api/chat`
-Send a message to the AI chatbot.
+### Language Support
+Add new languages by modifying the `setLang()` function in `index.html` and updating the system prompts in the backend.
 
-**Request Body:**
-```json
-{
-  "message": "Hello, how are you?",
-  "lang": "en",
-  "sessionId": "optional_session_id"
-}
+### Styling
+The design uses CSS custom properties for easy theming. Modify the `:root` variables in the CSS to change colors.
+
+### AI Behavior
+Adjust the system prompts in `server.js` and `netlify/functions/chat.js` to change how the AI responds.
+
+## Development
+
+### Scripts
+- `npm start` - Start production server
+- `npm run dev` - Start development server with auto-reload
+
+### Adding Features
+1. Frontend changes go in `index.html`
+2. Backend logic goes in `server.js`
+3. Netlify function updates go in `netlify/functions/chat.js`
+
+## Troubleshooting
+
+### Common Issues
+
+1. **API Key Error**: Ensure `DEEPSEEK_API_KEY` is set correctly
+2. **CORS Issues**: The server includes CORS middleware for development
+3. **Port Conflicts**: Change `PORT` in `server.js` if needed
+
+### Debug Mode
+Enable detailed logging by setting `NODE_ENV=development`:
+```bash
+NODE_ENV=development npm run dev
 ```
 
-**Response:**
-```json
-{
-  "reply": "Hello! I'm doing great, thank you for asking. How can I help you today?"
-}
-```
-
-## 🌍 Language Support
-
-- **English**: Default language for general chat
-- **বাংলা (Bengali)**: Full Bengali language support
-- **Auto-switching**: Responds in the language you choose
-
-## 🎨 UI Features
-
-- **Theme Toggle**: Switch between light and dark modes
-- **Language Toggle**: Switch between English and বাংলা
-- **Responsive Design**: Works on desktop, tablet, and mobile
-- **Typing Animation**: Realistic typing effect for AI responses
-- **Modern Interface**: Clean, intuitive design
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-### How to Contribute
+## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-## 📝 License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Support
 
-- **DeepSeek**: For providing the AI model
-- **Express.js**: For the web framework
-- **Render**: For free hosting
-- **Open Source Community**: For inspiration and tools
-
-## 📞 Support
-
-If you have any questions or need help:
-
-- 🐛 **Report bugs**: [Create an issue](https://github.com/zubairdoescoding/shobdo-kotha/issues)
-- 💡 **Request features**: [Create an issue](https://github.com/zubairdoescoding/shobdo-kotha/issues)
-- 📧 **Contact**: [Your email or social media]
+For issues and questions:
+- Check the troubleshooting section
+- Review the code comments
+- Open an issue on GitHub
 
 ---
 
-**Made with ❤️ for the Bengali-speaking community and AI enthusiasts worldwide!**
-
-[![GitHub stars](https://img.shields.io/github/stars/zubairdoescoding/shobdo-kotha?style=social)](https://github.com/zubairdoescoding/shobdo-kotha)
-[![GitHub forks](https://img.shields.io/github/forks/zubairdoescoding/shobdo-kotha?style=social)](https://github.com/zubairdoescoding/shobdo-kotha)
-[![GitHub issues](https://github.com/zubairdoescoding/shobdo-kotha/issues)](https://github.com/zubairdoescoding/shobdo-kotha/issues)
+**শব্দ কথা** - Where words come alive! 🚀
